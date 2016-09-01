@@ -182,7 +182,7 @@ php artisan key:generate
 php artisan make:command [--handler] [--queued] name
 // Create a new Artisan command
 //  --command     The terminal command that should be assigned. (default: "command:name")
-make:console [--command[="..."]] name
+make:command [--command[="..."]] name
 // Create a new resourceful controller
 // --plain      Generate an empty controller class.
 php artisan make:controller [--plain] name
@@ -520,8 +520,8 @@ DB::table('name')->first();
 $name = DB::table('users')->where('name', 'John')->pluck('name');
 DB::table('name')->pluck('column');
 // Retrieving A List Of Column Values
-$roles = DB::table('roles')->lists('title');
-$roles = DB::table('roles')->lists('title', 'name');
+$roles = DB::table('roles')->pluck('title');
+$roles = DB::table('roles')->pluck('title', 'name');
 // Specifying A Select Clause
 $users = DB::table('users')->select('name', 'email')->get();
 $users = DB::table('users')->distinct()->get();
@@ -1494,9 +1494,9 @@ php artisan queue:listen
 php artisan queue:listen connection
 php artisan queue:listen --timeout=60
 // Process only the first job on the queue
-php artisan queue:work
+php artisan queue:work --once
 // Start a queue worker in daemon mode
-php artisan queue:work --daemon
+php artisan queue:work
 // Create migration file for failed jobs
 php artisan queue:failed-table
 // Listing failed jobs
@@ -1514,7 +1514,8 @@ php artisan queue:flush
               <pre class="prettyprint lang-php">
 Validator::make(
 array('key' => 'Foo'),
-array('key' => 'required|in:Foo')
+array('key' => 'required|in:Foo'),
+array('string' => 'nullable|max:5')
 );
 Validator::extend('foo', function($attribute, $value, $params){});
 Validator::extend('foo', 'FooValidator@validate');
@@ -1970,7 +1971,7 @@ $filtered = $collection->filter(function ($item) {
     return $item > 2;
 });
 // Returns the first element in the collection that passes a given truth test:
-collect([1, 2, 3, 4])->first(function ($key, $value) {
+collect([1, 2, 3, 4])->first(function ($value, $key) {
     return $value > 2;
 });
 // Flattens a multi-dimensional collection into a single dimension:
